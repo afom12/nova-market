@@ -624,7 +624,8 @@ so a decrement can never run twice or drive stock negative.
 
 **Transport and transport-adjacent.** Helmet security headers;
 `x-powered-by` disabled; an explicit CORS allow-list with `credentials: true`
-(a wildcard origin is illegal in that mode and is not used); `trust proxy` set
+(a wildcard origin is illegal in that mode and is not used) — a disallowed
+origin is rejected with a structured `403 FORBIDDEN`, not a 500; `trust proxy` set
 so rate limiting sees real client IPs; body size capped at 100 kB; rate limits
 of 300 requests/15 min globally, 20/15 min on auth endpoints and 10/min on
 checkout.
@@ -765,26 +766,41 @@ start if they are unset rather than booting insecurely.
 
 ## 17. Screenshots
 
-Add screenshots here before submitting. Suggested set:
+### Storefront
 
-| View | Suggested filename |
+| Home | Shop with filters |
 |---|---|
-| Home page | `docs/screenshots/home.png` |
-| Shop with filters | `docs/screenshots/shop.png` |
-| Product details | `docs/screenshots/product.png` |
-| Cart | `docs/screenshots/cart.png` |
-| Stripe hosted Checkout | `docs/screenshots/stripe-checkout.png` |
-| Payment success (confirmed) | `docs/screenshots/success.png` |
-| Payment success (awaiting webhook) | `docs/screenshots/success-pending.png` |
-| Order history | `docs/screenshots/orders.png` |
-| Admin dashboard | `docs/screenshots/admin-dashboard.png` |
-| Admin products | `docs/screenshots/admin-products.png` |
-| `stripe listen` output | `docs/screenshots/stripe-cli.png` |
-| Test run | `docs/screenshots/tests.png` |
+| ![Home page](docs/screenshots/home.png) | ![Shop page with category and price filters](docs/screenshots/shop.png) |
 
-```markdown
-![Home](docs/screenshots/home.png)
-```
+| Product details | Cart |
+|---|---|
+| ![Product details page](docs/screenshots/product.png) | ![Cart with line items and server-calculated total](docs/screenshots/cart.png) |
+
+### Checkout and payment
+
+The success page is read-only: it polls `GET /api/orders/by-session` and only
+shows "confirmed" once the verified webhook has marked the order `PAID`.
+
+| Stripe hosted Checkout | Awaiting webhook | Confirmed |
+|---|---|---|
+| ![Stripe hosted Checkout page in test mode](docs/screenshots/stripe-checkout.png) | ![Success page while the webhook is pending](docs/screenshots/success-pending.png) | ![Success page after the order is marked paid](docs/screenshots/success.png) |
+
+![Order history](docs/screenshots/orders.png)
+
+### Admin
+
+| Dashboard (revenue counts `PAID` orders only) | Product management |
+|---|---|
+| ![Admin dashboard with revenue and payment breakdown](docs/screenshots/admin-dashboard.png) | ![Admin product management table](docs/screenshots/admin-products.png) |
+
+### Webhooks and tests
+
+`stripe listen` forwarding a real event, including a `stripe events resend`
+replay that the server recognises as a duplicate:
+
+![stripe listen output showing delivered and replayed events](docs/screenshots/stripe-cli.png)
+
+![Backend and frontend test runs passing](docs/screenshots/tests.png)
 
 ---
 

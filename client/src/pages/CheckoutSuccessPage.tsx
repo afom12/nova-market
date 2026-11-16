@@ -96,7 +96,7 @@ export const CheckoutSuccessPage = () => {
   }
 
   return (
-    <div className="container max-w-3xl py-14 md:py-20">
+    <div className="container max-w-3xl py-16 md:py-24">
       <div className="text-center">
         <div
           className={`mx-auto flex h-14 w-14 items-center justify-center rounded-full ${
@@ -110,7 +110,7 @@ export const CheckoutSuccessPage = () => {
           )}
         </div>
 
-        <h1 className="mt-6 text-3xl font-semibold sm:text-4xl">
+        <h1 className="mt-6 text-4xl sm:text-5xl">
           {isPaid ? 'Thank you for your order' : 'Confirming your payment'}
         </h1>
 
@@ -171,7 +171,7 @@ export const CheckoutSuccessPage = () => {
 
           <Separator className="my-6" />
 
-          <h2 className="text-base font-semibold">Items</h2>
+          <h2 className="text-2xl">Items</h2>
           <ul className="mt-4 divide-y divide-border">
             {order.items.map((item) => (
               <li key={item.id} className="flex items-center gap-4 py-4">

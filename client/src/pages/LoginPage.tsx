@@ -49,7 +49,7 @@ export const LoginPage = () => {
     <div className="container flex justify-center py-16 md:py-24">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">Sign in</CardTitle>
+          <CardTitle className="text-4xl">Sign in</CardTitle>
           <CardDescription>Access your orders and complete checkout.</CardDescription>
         </CardHeader>
 

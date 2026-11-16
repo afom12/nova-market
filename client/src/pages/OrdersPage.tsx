@@ -21,10 +21,10 @@ export const OrdersPage = () => {
   });
 
   return (
-    <div className="container py-12 md:py-16">
+    <div className="container py-16 md:py-24">
       <header className="max-w-2xl">
         <p className="text-eyebrow">Your account</p>
-        <h1 className="mt-2 text-3xl font-semibold sm:text-4xl">Order history</h1>
+        <h1 className="mt-2 text-4xl sm:text-5xl">Order history</h1>
         <p className="mt-3 text-base leading-relaxed text-muted-foreground">
           Every order placed with this account, with its live payment status.
         </p>

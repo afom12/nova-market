@@ -68,7 +68,7 @@ export const ProductDetailsPage = () => {
   };
 
   return (
-    <div className="container py-10 md:py-14">
+    <div className="container py-14 md:py-20">
       <Button asChild variant="ghost" size="sm" className="-ml-3 mb-8">
         <Link to="/shop">
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
@@ -85,7 +85,7 @@ export const ProductDetailsPage = () => {
 
         <div>
           <p className="text-eyebrow">{product.category}</p>
-          <h1 className="mt-2.5 text-3xl font-semibold leading-tight sm:text-4xl">{product.name}</h1>
+          <h1 className="mt-2.5 text-4xl sm:text-5xl">{product.name}</h1>
 
           <p className="tabular mt-5 text-3xl font-semibold">
             {formatMoney(product.priceCents, product.currency)}

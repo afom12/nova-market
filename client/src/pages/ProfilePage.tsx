@@ -31,17 +31,17 @@ export const ProfilePage = () => {
   if (!user) return null;
 
   return (
-    <div className="container max-w-3xl py-12 md:py-16">
+    <div className="container max-w-3xl py-16 md:py-24">
       <header>
         <p className="text-eyebrow">Your account</p>
-        <h1 className="mt-2 text-3xl font-semibold sm:text-4xl">Profile</h1>
+        <h1 className="mt-2 text-4xl sm:text-5xl">Profile</h1>
       </header>
 
       <Card className="mt-9">
         <CardContent className="p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold">{user.name}</h2>
+              <h2 className="text-2xl">{user.name}</h2>
               <p className="mt-1 text-sm text-muted-foreground">{user.email}</p>
             </div>
             <Badge tone={isAdmin ? 'info' : 'neutral'}>

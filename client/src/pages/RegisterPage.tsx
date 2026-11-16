@@ -49,7 +49,7 @@ export const RegisterPage = () => {
     <div className="container flex justify-center py-16 md:py-24">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">Create your account</CardTitle>
+          <CardTitle className="text-4xl">Create your account</CardTitle>
           <CardDescription>Track orders and check out in a few clicks.</CardDescription>
         </CardHeader>
 

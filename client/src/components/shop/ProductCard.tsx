@@ -13,6 +13,15 @@ interface ProductCardProps {
   product: Product;
 }
 
+/*
+ * The add-to-cart affordance is revealed on hover — but only on devices that
+ * can actually hover. Touch screens always see it, and keyboard users see it
+ * as soon as focus enters the card (focus-within), so it is never hidden from
+ * anyone who cannot hover.
+ */
+const revealOnHover =
+  'transition-opacity duration-300 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 group-focus-within:!opacity-100';
+
 export const ProductCard = ({ product }: ProductCardProps) => {
   const addItem = useCartStore((state) => state.addItem);
   const outOfStock = product.stock <= 0;
@@ -24,16 +33,16 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-card transition-shadow duration-300 hover:shadow-lift">
+    <article className="group flex flex-col">
       <Link
         to={`/products/${product.slug}`}
-        className="relative block aspect-[4/3] overflow-hidden bg-secondary"
+        className="relative block aspect-[4/5] overflow-hidden rounded-sm bg-secondary"
         aria-label={`View ${product.name}`}
       >
         <ProductImage
           src={product.imageUrl}
           alt={product.name}
-          className="transition-transform duration-500 group-hover:scale-[1.03]"
+          className="transition-transform duration-700 ease-out group-hover:scale-[1.025]"
         />
         {outOfStock ? (
           <span className="absolute left-3 top-3">
@@ -46,24 +55,29 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         ) : null}
       </Link>
 
-      <div className="flex flex-1 flex-col p-5">
-        <p className="text-eyebrow">{product.category}</p>
+      <div className="flex flex-1 flex-col pt-5">
+        <div className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
+          <p className="text-eyebrow">{product.category}</p>
+          <span className="tabular text-sm text-foreground">
+            {formatMoney(product.priceCents, product.currency)}
+          </span>
+        </div>
 
-        <h3 className="mt-2 text-base font-semibold leading-snug">
-          <Link to={`/products/${product.slug}`} className="transition-colors hover:text-primary">
+        <h3 className="mt-4 text-2xl leading-[1.12]">
+          <Link
+            to={`/products/${product.slug}`}
+            className="bg-[length:0%_1px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 [background-image:linear-gradient(currentColor,currentColor)] group-hover:bg-[length:100%_1px]"
+          >
             {product.name}
           </Link>
         </h3>
 
-        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+        <p className="mt-3 line-clamp-2 max-w-measure text-sm leading-relaxed text-muted-foreground">
           {product.description}
         </p>
 
-        <div className="mt-5 flex items-center justify-between gap-3 pt-1">
-          <span className="tabular text-lg font-semibold">
-            {formatMoney(product.priceCents, product.currency)}
-          </span>
-          <Button size="sm" onClick={handleAdd} disabled={outOfStock}>
+        <div className={`mt-5 ${revealOnHover}`}>
+          <Button size="sm" variant="outline" onClick={handleAdd} disabled={outOfStock}>
             <ShoppingBag className="h-4 w-4" aria-hidden="true" />
             {outOfStock ? 'Unavailable' : 'Add'}
           </Button>
@@ -75,17 +89,17 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
 /** Matches the card's real dimensions so the grid does not jump on load. */
 export const ProductCardSkeleton = () => (
-  <div className="overflow-hidden rounded-lg border border-border bg-card">
-    <Skeleton className="aspect-[4/3] w-full rounded-none" />
-    <div className="space-y-3 p-5">
-      <Skeleton className="h-3 w-16" />
-      <Skeleton className="h-5 w-3/4" />
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-2/3" />
-      <div className="flex items-center justify-between pt-2">
-        <Skeleton className="h-6 w-20" />
-        <Skeleton className="h-9 w-20" />
+  <div>
+    <Skeleton className="aspect-[4/5] w-full rounded-sm" />
+    <div className="pt-5">
+      <div className="flex items-center justify-between border-b border-border pb-3">
+        <Skeleton className="h-3 w-16" />
+        <Skeleton className="h-4 w-14" />
       </div>
+      <Skeleton className="mt-4 h-7 w-3/4" />
+      <Skeleton className="mt-3 h-4 w-full" />
+      <Skeleton className="mt-2 h-4 w-2/3" />
+      <Skeleton className="mt-5 h-9 w-20" />
     </div>
   </div>
 );

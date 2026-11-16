@@ -19,7 +19,7 @@ export const CheckoutCancelPage = () => {
           <XCircle className="h-7 w-7 text-muted-foreground" aria-hidden="true" />
         </div>
 
-        <h1 className="mt-6 text-3xl font-semibold sm:text-4xl">Checkout cancelled</h1>
+        <h1 className="mt-6 text-4xl sm:text-5xl">Checkout cancelled</h1>
 
         <p className="mx-auto mt-3 max-w-lg text-base leading-relaxed text-muted-foreground">
           No payment was taken and you have not been charged. Your cart is exactly as you left it.
@@ -28,7 +28,7 @@ export const CheckoutCancelPage = () => {
 
       <Card className="mt-10">
         <CardContent className="p-6">
-          <h2 className="text-base font-semibold">What happens now</h2>
+          <h2 className="text-2xl">What happens now</h2>
           <ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
             <li className="flex gap-3">
               <span aria-hidden="true">•</span>

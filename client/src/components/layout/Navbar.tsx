@@ -29,19 +29,24 @@ export const Navbar = () => {
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
-      'text-sm font-medium transition-colors hover:text-primary',
-      isActive ? 'text-primary' : 'text-muted-foreground',
+      'relative py-1 text-sm transition-colors hover:text-foreground',
+      // Active page: ink text plus a terracotta hairline, not colour alone.
+      isActive
+        ? 'text-foreground after:absolute after:inset-x-0 after:-bottom-px after:h-px after:bg-accent'
+        : 'text-muted-foreground',
     );
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="container flex h-16 items-center justify-between gap-6">
-        <Link to="/" className="flex items-baseline gap-2" aria-label="NOVA MARKET home">
-          <span className="text-lg font-bold tracking-[0.18em] text-primary">NOVA</span>
-          <span className="text-lg font-light tracking-[0.18em] text-muted-foreground">MARKET</span>
+    <header className="sticky top-0 z-40 w-full border-b border-border bg-background/85 backdrop-blur-sm supports-[backdrop-filter]:bg-background/70">
+      <div className="container flex h-[4.5rem] items-center justify-between gap-6">
+        <Link to="/" className="flex items-baseline gap-1.5" aria-label="NOVA MARKET home">
+          <span className="font-serif text-2xl tracking-tightest text-foreground">Nova</span>
+          <span className="font-serif text-2xl font-light italic tracking-tightest text-muted-foreground">
+            Market
+          </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 md:flex" aria-label="Main">
+        <nav className="hidden items-center gap-9 md:flex" aria-label="Main">
           {navLinks.map((link) => (
             <NavLink key={link.to} to={link.to} end={link.end} className={linkClass}>
               {link.label}
@@ -64,7 +69,7 @@ export const Navbar = () => {
             <Link to="/cart" aria-label={`Cart, ${itemCount} item${itemCount === 1 ? '' : 's'}`}>
               <ShoppingBag className="h-5 w-5" aria-hidden="true" />
               {itemCount > 0 ? (
-                <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[11px] font-semibold text-accent-foreground">
+                <span className="tabular absolute right-0.5 top-0.5 flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-medium text-accent-foreground">
                   {itemCount > 99 ? '99+' : itemCount}
                 </span>
               ) : null}
@@ -110,14 +115,14 @@ export const Navbar = () => {
 
       {mobileOpen ? (
         <nav id="mobile-nav" className="border-t border-border bg-background md:hidden" aria-label="Mobile">
-          <div className="container flex flex-col py-3">
+          <div className="container flex flex-col pb-6 pt-2">
             {navLinks.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
                 end={link.end}
                 onClick={() => setMobileOpen(false)}
-                className="py-2.5 text-sm font-medium text-foreground"
+                className="border-b border-border py-3.5 font-serif text-xl text-foreground"
               >
                 {link.label}
               </NavLink>
@@ -125,29 +130,29 @@ export const Navbar = () => {
 
             {isAuthenticated ? (
               <>
-                <NavLink to="/orders" onClick={() => setMobileOpen(false)} className="py-2.5 text-sm font-medium">
+                <NavLink to="/orders" onClick={() => setMobileOpen(false)} className="border-b border-border py-3.5 font-serif text-xl">
                   <span className="inline-flex items-center gap-2">
                     <Package className="h-4 w-4" aria-hidden="true" /> Orders
                   </span>
                 </NavLink>
-                <NavLink to="/profile" onClick={() => setMobileOpen(false)} className="py-2.5 text-sm font-medium">
+                <NavLink to="/profile" onClick={() => setMobileOpen(false)} className="border-b border-border py-3.5 font-serif text-xl">
                   <span className="inline-flex items-center gap-2">
                     <UserIcon className="h-4 w-4" aria-hidden="true" /> Profile
                   </span>
                 </NavLink>
                 {isAdmin ? (
-                  <NavLink to="/admin" onClick={() => setMobileOpen(false)} className="py-2.5 text-sm font-medium">
+                  <NavLink to="/admin" onClick={() => setMobileOpen(false)} className="border-b border-border py-3.5 font-serif text-xl">
                     <span className="inline-flex items-center gap-2">
                       <LayoutDashboard className="h-4 w-4" aria-hidden="true" /> Admin
                     </span>
                   </NavLink>
                 ) : null}
-                <Button variant="outline" className="mt-3" onClick={handleLogout}>
+                <Button variant="outline" className="mt-6" onClick={handleLogout}>
                   Sign out
                 </Button>
               </>
             ) : (
-              <div className="mt-3 flex flex-col gap-2">
+              <div className="mt-6 flex flex-col gap-2">
                 <Button asChild variant="outline" onClick={() => setMobileOpen(false)}>
                   <Link to="/login">Sign in</Link>
                 </Button>

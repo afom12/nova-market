@@ -13,7 +13,7 @@ export const EmptyState = ({ icon: Icon, title, description, action }: EmptyStat
     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background shadow-card">
       <Icon className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
     </div>
-    <h2 className="mt-5 text-base font-semibold">{title}</h2>
+    <h2 className="mt-5 text-2xl">{title}</h2>
     <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">{description}</p>
     {action ? <div className="mt-6">{action}</div> : null}
   </div>

@@ -62,7 +62,7 @@ export const CartPage = () => {
   if (lines.length === 0) {
     return (
       <div className="container py-16 md:py-20">
-        <h1 className="mb-10 text-3xl font-semibold sm:text-4xl">Your cart</h1>
+        <h1 className="mb-10 text-4xl sm:text-5xl">Your cart</h1>
         <EmptyState
           icon={ShoppingBag}
           title="Your cart is empty"
@@ -78,9 +78,9 @@ export const CartPage = () => {
   }
 
   return (
-    <div className="container py-12 md:py-16">
+    <div className="container py-16 md:py-24">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-3xl font-semibold sm:text-4xl">Your cart</h1>
+        <h1 className="text-4xl sm:text-5xl">Your cart</h1>
         <Button variant="ghost" size="sm" onClick={clear}>
           <Trash2 className="h-4 w-4" aria-hidden="true" />
           Clear cart
@@ -101,7 +101,7 @@ export const CartPage = () => {
 
                 <div className="flex min-w-0 flex-1 flex-col">
                   <div className="flex flex-wrap items-start justify-between gap-2">
-                    <h2 className="text-sm font-semibold sm:text-base">
+                    <h2 className="text-lg sm:text-xl">
                       <Link to={`/products/${line.slug}`} className="hover:text-primary">
                         {line.name}
                       </Link>
@@ -141,7 +141,7 @@ export const CartPage = () => {
         <aside className="lg:col-span-5 xl:col-span-4">
           <Card className="sticky top-24">
             <CardContent className="p-6">
-              <h2 className="text-base font-semibold">Order summary</h2>
+              <h2 className="text-2xl">Order summary</h2>
 
               <dl className="mt-5 space-y-3 text-sm">
                 <div className="flex justify-between">

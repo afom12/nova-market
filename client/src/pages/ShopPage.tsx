@@ -80,17 +80,17 @@ export const ShopPage = () => {
   const hasFilters = Boolean(category || search);
 
   return (
-    <div className="container py-12 md:py-16">
+    <div className="container py-16 md:py-24">
       <header className="max-w-2xl">
         <p className="text-eyebrow">Catalogue</p>
-        <h1 className="mt-2 text-3xl font-semibold sm:text-4xl">Shop all products</h1>
-        <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+        <h1 className="mt-2 text-4xl sm:text-5xl">Shop all products</h1>
+        <p className="mt-5 max-w-measure text-base leading-relaxed text-muted-foreground">
           Six considered pieces across audio, workspace, lighting and home.
         </p>
       </header>
 
       {/* Filters */}
-      <div className="mt-10 flex flex-col gap-4 rounded-lg border border-border bg-card p-4 sm:flex-row sm:items-end">
+      <div className="mt-14 flex flex-col gap-5 border-y border-border py-6 sm:flex-row sm:items-end">
         <div className="flex-1">
           <Label htmlFor="product-search" className="mb-1.5 block">
             Search
@@ -168,7 +168,7 @@ export const ShopPage = () => {
       {/* Results */}
       <div className="mt-10" aria-busy={isFetching}>
         {isLoading ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }, (_, index) => (
               <ProductCardSkeleton key={index} />
             ))}
@@ -186,7 +186,7 @@ export const ShopPage = () => {
           />
         ) : data && data.products.length > 0 ? (
           <>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
               {data.products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

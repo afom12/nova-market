@@ -79,7 +79,9 @@ export const getAdminStats = async (days = 14): Promise<AdminStats> => {
     prisma.product.count(),
     prisma.product.count({ where: { isActive: true } }),
     prisma.product.count({ where: { isActive: true, stock: { lte: LOW_STOCK_THRESHOLD } } }),
-    prisma.payment.groupBy({ by: ['status'], _count: { _all: true } }),
+    // Prisma's groupBy typings require an explicit orderBy when the call is
+    // passed to an array $transaction; without it `tsc` (and the build) fails.
+    prisma.payment.groupBy({ by: ['status'], _count: { _all: true }, orderBy: { status: 'asc' } }),
     prisma.order.findMany({
       where: { status: OrderStatus.PAID },
       orderBy: { createdAt: 'desc' },
@@ -91,8 +93,11 @@ export const getAdminStats = async (days = 14): Promise<AdminStats> => {
     }),
   ]);
 
-  const countByStatus = (status: PaymentStatus): number =>
-    paymentGroups.find((group) => group.status === status)?._count._all ?? 0;
+  const countByStatus = (status: PaymentStatus): number => {
+    // With orderBy present, Prisma types `_count` as `true | {...}`; narrow it.
+    const count = paymentGroups.find((group) => group.status === status)?._count;
+    return typeof count === 'object' ? (count._all ?? 0) : 0;
+  };
 
   // date_trunc has no Prisma equivalent; the query is parameterised, so the
   // user-controlled value never reaches the SQL text.

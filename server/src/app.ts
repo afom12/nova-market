@@ -8,6 +8,7 @@ import { logger } from './lib/logger';
 import { csrfProtection } from './middleware/csrf';
 import { apiLimiter } from './middleware/rateLimit';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { AppError } from './utils/AppError';
 import apiRoutes from './routes';
 import webhookRoutes from './routes/webhook.routes';
 
@@ -40,7 +41,9 @@ export const createApp = (): Express => {
         // Same-origin/server-to-server requests send no Origin header.
         if (!origin) return callback(null, true);
         if (env.corsOrigins.includes(origin)) return callback(null, true);
-        return callback(new Error(`Origin ${origin} is not allowed by CORS`));
+        // An AppError (not a plain Error) so the central handler answers with
+        // 403 FORBIDDEN instead of treating a policy rejection as a 500 crash.
+        return callback(AppError.forbidden(`Origin ${origin} is not allowed by CORS`));
       },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

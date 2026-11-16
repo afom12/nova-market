@@ -58,14 +58,29 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+        // Fraunces carries every heading and the wordmark; DM Sans does the
+        // reading and the UI. The serif/sans contrast is the hierarchy, so
+        // headings stay at normal weight.
+        serif: ['Fraunces', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'serif'],
+        sans: ['"DM Sans"', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+      },
+      fontSize: {
+        // Fluid hero headline: ~2.75rem on a phone, up to 6rem on wide screens.
+        display: ['clamp(2.75rem, 1.6rem + 5.2vw, 6rem)', { lineHeight: '1.02', letterSpacing: '-0.025em' }],
       },
       letterSpacing: {
-        tightest: '-0.035em',
+        tightest: '-0.02em',
+        eyebrow: '0.16em',
+      },
+      maxWidth: {
+        // Comfortable reading measure for body copy.
+        measure: '62ch',
       },
       boxShadow: {
-        card: '0 1px 2px 0 rgb(16 24 40 / 0.04), 0 1px 3px 0 rgb(16 24 40 / 0.06)',
-        lift: '0 12px 32px -12px rgb(16 24 40 / 0.18)',
+        // Editorial direction: hairlines, not elevation. Kept as near-invisible
+        // tokens so overlays (dialogs, selects) still separate from the page.
+        card: '0 0 0 0 transparent',
+        lift: '0 18px 40px -24px hsl(20 14% 11% / 0.28)',
       },
       keyframes: {
         'accordion-down': {

@@ -43,7 +43,7 @@ export const AdminDashboardPage = () => {
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="text-2xl font-semibold sm:text-3xl">Dashboard</h1>
+        <h1 className="text-3xl sm:text-4xl">Dashboard</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Revenue counts verified, successfully paid orders only.
         </p>

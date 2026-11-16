@@ -57,7 +57,7 @@ export const AdminOrderDetailsPage = () => {
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-eyebrow">Order</p>
-          <h1 className="tabular mt-2 text-2xl font-semibold sm:text-3xl">{order.orderNumber}</h1>
+          <h1 className="tabular mt-2 text-3xl sm:text-4xl">{order.orderNumber}</h1>
           <p className="mt-2 text-sm text-muted-foreground">{formatDateTime(order.createdAt)}</p>
         </div>
         <div className="flex flex-wrap gap-2">

@@ -47,7 +47,7 @@ export const OrderDetailsPage = () => {
   }
 
   return (
-    <div className="container max-w-3xl py-12 md:py-16">
+    <div className="container max-w-3xl py-16 md:py-24">
       <Button asChild variant="ghost" size="sm" className="-ml-3 mb-8">
         <Link to="/orders">
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
@@ -58,7 +58,7 @@ export const OrderDetailsPage = () => {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-eyebrow">Order</p>
-          <h1 className="tabular mt-2 text-2xl font-semibold sm:text-3xl">{order.orderNumber}</h1>
+          <h1 className="tabular mt-2 text-3xl sm:text-4xl">{order.orderNumber}</h1>
           <p className="mt-2 text-sm text-muted-foreground">{formatDateTime(order.createdAt)}</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -88,7 +88,7 @@ export const OrderDetailsPage = () => {
 
       <Card className="mt-8">
         <CardContent className="p-6">
-          <h2 className="text-base font-semibold">Items</h2>
+          <h2 className="text-2xl">Items</h2>
 
           <ul className="mt-4 divide-y divide-border">
             {order.items.map((item) => (
@@ -126,7 +126,7 @@ export const OrderDetailsPage = () => {
 
       <Card className="mt-6">
         <CardContent className="p-6">
-          <h2 className="text-base font-semibold">Payment</h2>
+          <h2 className="text-2xl">Payment</h2>
           <dl className="mt-4 grid gap-5 sm:grid-cols-2">
             <div>
               <dt className="text-eyebrow">Method</dt>
