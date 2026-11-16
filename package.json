@@ -1,0 +1,30 @@
+{
+  "name": "nova-market",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NOVA MARKET - full-stack e-commerce application with Stripe Checkout",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,magenta \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "npm --workspace server run dev",
+    "dev:client": "npm --workspace client run dev",
+    "build": "npm --workspace server run build && npm --workspace client run build",
+    "test": "npm --workspace server run test:run && npm --workspace client run test:run",
+    "test:server": "npm --workspace server run test:run",
+    "test:client": "npm --workspace client run test:run",
+    "db:migrate": "npm --workspace server run db:migrate",
+    "db:seed": "npm --workspace server run db:seed",
+    "lint": "npm --workspace server run lint && npm --workspace client run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md,css}\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "prettier": "^3.4.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

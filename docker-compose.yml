@@ -1,0 +1,69 @@
+name: nova-market
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nova-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-nova}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nova_password}
+      POSTGRES_DB: ${POSTGRES_DB:-nova_market}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      # The API must not start migrating before Postgres accepts connections.
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-nova} -d ${POSTGRES_DB:-nova_market}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: nova-server
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-nova}:${POSTGRES_PASSWORD:-nova_password}@postgres:5432/${POSTGRES_DB:-nova_market}?schema=public
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      COOKIE_SAME_SITE: ${COOKIE_SAME_SITE:-lax}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:?STRIPE_SECRET_KEY must be set}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:?STRIPE_WEBHOOK_SECRET must be set}
+      STRIPE_CURRENCY: ${STRIPE_CURRENCY:-usd}
+      CLIENT_URL: ${CLIENT_URL:-http://localhost:8080}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-admin@novamarket.test}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-Admin123!change}
+      SEED_CUSTOMER_EMAIL: ${SEED_CUSTOMER_EMAIL:-customer@novamarket.test}
+      SEED_CUSTOMER_PASSWORD: ${SEED_CUSTOMER_PASSWORD:-Customer123!}
+    ports:
+      - '${SERVER_PORT:-4000}:4000'
+    # Migrations are applied with `migrate deploy` (never `migrate dev`) so a
+    # container start can never prompt or reset data.
+    command: sh -c "npx prisma migrate deploy && node dist/index.js"
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:4000/api}
+    container_name: nova-client
+    restart: unless-stopped
+    depends_on:
+      - server
+    ports:
+      - '${CLIENT_PORT:-8080}:80'
+
+volumes:
+  postgres-data:

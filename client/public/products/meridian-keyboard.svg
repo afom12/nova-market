@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Mechanical keyboard">
+  <rect width="800" height="600" fill="#EDEFF2"/>
+  <ellipse cx="400" cy="466" rx="268" ry="20" fill="#1B2B40" opacity="0.07"/>
+  <!-- chassis -->
+  <rect x="134" y="196" width="532" height="252" rx="26" fill="#1B2B40"/>
+  <rect x="152" y="212" width="496" height="206" rx="16" fill="#2B3C53"/>
+  <!-- key rows -->
+  <g fill="#44596F">
+    <g>
+      <rect x="172" y="232" width="40" height="34" rx="7"/><rect x="220" y="232" width="40" height="34" rx="7"/>
+      <rect x="268" y="232" width="40" height="34" rx="7"/><rect x="316" y="232" width="40" height="34" rx="7"/>
+      <rect x="364" y="232" width="40" height="34" rx="7"/><rect x="412" y="232" width="40" height="34" rx="7"/>
+      <rect x="460" y="232" width="40" height="34" rx="7"/><rect x="508" y="232" width="40" height="34" rx="7"/>
+      <rect x="556" y="232" width="72" height="34" rx="7"/>
+    </g>
+    <g transform="translate(0,44)">
+      <rect x="172" y="232" width="56" height="34" rx="7"/><rect x="236" y="232" width="40" height="34" rx="7"/>
+      <rect x="284" y="232" width="40" height="34" rx="7"/><rect x="332" y="232" width="40" height="34" rx="7"/>
+      <rect x="380" y="232" width="40" height="34" rx="7"/><rect x="428" y="232" width="40" height="34" rx="7"/>
+      <rect x="476" y="232" width="40" height="34" rx="7"/><rect x="524" y="232" width="104" height="34" rx="7"/>
+    </g>
+    <g transform="translate(0,88)">
+      <rect x="172" y="232" width="68" height="34" rx="7"/><rect x="248" y="232" width="40" height="34" rx="7"/>
+      <rect x="296" y="232" width="40" height="34" rx="7"/><rect x="344" y="232" width="40" height="34" rx="7"/>
+      <rect x="392" y="232" width="40" height="34" rx="7"/><rect x="440" y="232" width="40" height="34" rx="7"/>
+      <rect x="488" y="232" width="140" height="34" rx="7"/>
+    </g>
+  </g>
+  <!-- spacebar row -->
+  <g fill="#44596F">
+    <rect x="172" y="364" width="52" height="34" rx="7"/>
+    <rect x="232" y="364" width="52" height="34" rx="7"/>
+    <rect x="292" y="364" width="216" height="34" rx="7"/>
+    <rect x="516" y="364" width="52" height="34" rx="7"/>
+    <rect x="576" y="364" width="52" height="34" rx="7"/>
+  </g>
+  <!-- escape accent -->
+  <rect x="172" y="232" width="40" height="34" rx="7" fill="#C9892B"/>
+</svg>

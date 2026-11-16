@@ -1,0 +1,165 @@
+// NOVA MARKET — Prisma schema
+//
+// Money is stored exclusively as INTEGER MINOR UNITS (e.g. cents).
+// No floating point type is used anywhere for monetary values, which
+// removes an entire class of rounding bugs and matches the unit Stripe
+// itself expects in the API (`unit_amount`, `amount_total`).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING // order created, customer has not completed payment yet
+  PAID // payment confirmed by a verified Stripe webhook event
+  FAILED // payment attempted and failed (e.g. async payment failure)
+  CANCELLED // customer abandoned checkout
+  EXPIRED // Stripe Checkout Session expired before completion
+  REFUNDED // refunded after a successful payment
+}
+
+enum PaymentStatus {
+  PENDING // session created, awaiting outcome
+  PROCESSING // async payment method in flight (e.g. bank debit)
+  SUCCEEDED // funds confirmed by Stripe
+  FAILED
+  CANCELLED
+  EXPIRED
+  REFUNDED
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String   @db.VarChar(120)
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @db.VarChar(255)
+  role         Role     @default(CUSTOMER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orders Order[]
+
+  @@index([role])
+  @@map("users")
+}
+
+model Product {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @db.VarChar(160)
+  slug        String   @unique @db.VarChar(180)
+  description String   @db.Text
+  priceCents  Int // minor units, e.g. 24900 == $249.00
+  currency    String   @default("usd") @db.VarChar(3)
+  imageUrl    String   @db.VarChar(500)
+  category    String   @db.VarChar(80)
+  stock       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orderItems OrderItem[]
+
+  @@index([category])
+  @@index([isActive])
+  @@index([createdAt])
+  @@map("products")
+}
+
+model Order {
+  id          String      @id @default(uuid()) @db.Uuid
+  userId      String      @db.Uuid
+  orderNumber String      @unique @db.VarChar(40)
+  status      OrderStatus @default(PENDING)
+
+  subtotalCents    Int
+  totalAmountCents Int
+  currency         String @db.VarChar(3)
+
+  // Stripe correlation identifiers. Unique so a session can never be
+  // attached to two different orders.
+  stripeCheckoutSessionId String? @unique @db.VarChar(255)
+  stripePaymentIntentId   String? @db.VarChar(255)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items   OrderItem[]
+  payment Payment?
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([stripePaymentIntentId])
+  @@map("orders")
+}
+
+// Product data is SNAPSHOT onto the order item at purchase time, so a later
+// price change or product rename never rewrites customer order history.
+model OrderItem {
+  id             String  @id @default(uuid()) @db.Uuid
+  orderId        String  @db.Uuid
+  productId      String? @db.Uuid
+  productName    String  @db.VarChar(160)
+  productImage   String  @db.VarChar(500)
+  quantity       Int
+  unitPriceCents Int
+  subtotalCents  Int
+
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}
+
+model Payment {
+  id       String @id @default(uuid()) @db.Uuid
+  orderId  String @unique @db.Uuid
+  provider String @default("stripe") @db.VarChar(40)
+
+  stripeCheckoutSessionId String? @unique @db.VarChar(255)
+  stripePaymentIntentId   String? @db.VarChar(255)
+
+  amountCents Int
+  currency    String        @db.VarChar(3)
+  status      PaymentStatus @default(PENDING)
+  paidAt      DateTime?
+
+  failureReason String? @db.VarChar(500)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([stripePaymentIntentId])
+  @@map("payments")
+}
+
+// Idempotency ledger for Stripe webhooks.
+// The UNIQUE constraint on stripeEventId is the enforcement point: the row is
+// inserted inside the same transaction as the side effects, so a duplicate
+// delivery fails the insert and the transaction rolls back untouched.
+model WebhookEvent {
+  id            String   @id @default(uuid()) @db.Uuid
+  stripeEventId String   @unique @db.VarChar(255)
+  eventType     String   @db.VarChar(120)
+  processedAt   DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  @@index([eventType])
+  @@map("webhook_events")
+}
