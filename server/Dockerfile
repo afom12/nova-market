@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends openssl \
 
 COPY package*.json ./
 # Production dependencies only — no compiler or test tooling in the image.
-RUN RUN npm install --omit=dev
+RUN npm install --omit=dev
 
 COPY prisma ./prisma
 RUN npx prisma generate
