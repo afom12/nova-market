@@ -175,6 +175,10 @@ export const CartPage = () => {
                 ) : null}
               </Button>
 
+              <p className="tabular mt-3 text-center text-xs text-muted-foreground">
+                Test mode — pay with card 4242 4242 4242 4242
+              </p>
+
               {!isAuthenticated ? (
                 <p className="mt-3 text-center text-xs text-muted-foreground">
                   You will be asked to sign in before payment.

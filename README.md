@@ -7,8 +7,19 @@ payment processing enforced by database constraints.
 React 18 + Vite + TypeScript · Express + Prisma + PostgreSQL · Stripe-hosted
 Checkout. **Test mode only — no real payment is ever processed.**
 
-> **Live demo:** _add your URL here_
-> **API health:** _add your API URL_`/api/health`
+## Try it
+
+**Live demo:** https://client-neon-psi-14.vercel.app  
+**API health:** https://nova-market-api-t9r6.onrender.com/api/health
+
+Sign in with `customer@novamarket.test` / `Customer123!`
+(admin: `admin@novamarket.test` / `Admin123!change`)
+
+This runs in **Stripe test mode** — pay with card `4242 4242 4242 4242`,
+any future expiry, any CVC, any postcode. No real payment is processed.
+
+> The API is hosted on a free tier and sleeps when idle, so the first
+> request may take up to a minute.
 
 ---
 
