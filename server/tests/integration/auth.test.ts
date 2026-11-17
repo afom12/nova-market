@@ -151,6 +151,20 @@ describe('GET /api/auth/me', () => {
     expect(response.body.data.user).toMatchObject({ email: 'me@test.io', name: 'Me Myself' });
   });
 
+  it('returns the current CSRF token so a cross-origin client can recover it after refresh', async () => {
+    const user = await createUser({ email: 'me-csrf@test.io' });
+    const { agent, csrfToken } = await login(app, user.email);
+
+    const response = await agent.get('/api/auth/me').expect(200);
+    // Same value as the cookie, so the unchanged double-submit check accepts it.
+    expect(response.body.data.csrfToken).toBe(csrfToken);
+
+    await agent
+      .post('/api/auth/logout')
+      .set('X-CSRF-Token', response.body.data.csrfToken)
+      .expect(200);
+  });
+
   it('rejects an unauthenticated request with 401', async () => {
     const response = await request(app).get('/api/auth/me').expect(401);
     expect(response.body.error.code).toBe('UNAUTHORIZED');

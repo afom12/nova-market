@@ -9,6 +9,38 @@ const readCookie = (name: string): string | undefined => {
   return match?.split('=')[1];
 };
 
+/*
+ * CSRF token store.
+ *
+ * In production the client (Vercel) and API (Render) are on different
+ * domains, so `document.cookie` cannot see the API's `nova_csrf` cookie. The
+ * server therefore also returns the token in the login/register/me response
+ * bodies, and we keep it here. sessionStorage lets it survive a refresh but
+ * not outlive the tab. The server still compares cookie vs header exactly as
+ * before — only how the client obtains the value has changed.
+ */
+const CSRF_STORAGE_KEY = 'nova_csrf';
+
+const readStoredCsrfToken = (): string | null => {
+  try {
+    return typeof sessionStorage === 'undefined' ? null : sessionStorage.getItem(CSRF_STORAGE_KEY);
+  } catch {
+    return null; // storage can be blocked (privacy modes); fall back to the cookie
+  }
+};
+
+let csrfToken: string | null = readStoredCsrfToken();
+
+export const setCsrfToken = (token: string | null): void => {
+  csrfToken = token;
+  try {
+    if (token) sessionStorage.setItem(CSRF_STORAGE_KEY, token);
+    else sessionStorage.removeItem(CSRF_STORAGE_KEY);
+  } catch {
+    // Storage unavailable: the in-memory value still works for this page load.
+  }
+};
+
 export const api: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   // Required so the httpOnly auth cookie travels with cross-origin requests.
@@ -17,13 +49,15 @@ export const api: AxiosInstance = axios.create({
   timeout: 20_000,
 });
 
-// Echo the CSRF cookie back in a header on every state-changing request —
-// the other half of the server's double-submit check.
+// Echo the CSRF token back in a header on every state-changing request —
+// the other half of the server's double-submit check. Prefer the stored token
+// (works cross-origin); fall back to reading the cookie, which is all that
+// same-origin local development needs.
 api.interceptors.request.use((config) => {
   const method = config.method?.toUpperCase();
   if (method && !['GET', 'HEAD', 'OPTIONS'].includes(method)) {
-    const csrfToken = readCookie('nova_csrf');
-    if (csrfToken) config.headers.set('X-CSRF-Token', csrfToken);
+    const token = csrfToken ?? readCookie('nova_csrf');
+    if (token) config.headers.set('X-CSRF-Token', token);
   }
   return config;
 });

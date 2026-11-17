@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { authService, type Credentials, type RegisterPayload } from '@/services/auth.service';
-import { ApiError } from '@/services/api';
+import { ApiError, setCsrfToken } from '@/services/api';
 import type { User } from '@/types';
 
 interface AuthContextValue {
@@ -28,7 +28,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
    */
   const { data, isLoading } = useQuery({
     queryKey: AUTH_QUERY_KEY,
-    queryFn: authService.me,
+    // Re-captures the CSRF token on every page load: cross-origin, the client
+    // cannot read the CSRF cookie, so the server hands it back in the body.
+    queryFn: async (): Promise<User> => {
+      const session = await authService.me();
+      setCsrfToken(session.csrfToken);
+      return session.user;
+    },
     retry: (failureCount, error) => {
       if (error instanceof ApiError && error.status === 401) return false;
       return failureCount < 1;
@@ -39,17 +45,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const user = data ?? null;
 
   const loginMutation = useMutation({
-    mutationFn: authService.login,
+    mutationFn: async (credentials: Credentials): Promise<User> => {
+      const session = await authService.login(credentials);
+      setCsrfToken(session.csrfToken);
+      return session.user;
+    },
     onSuccess: (loggedIn) => queryClient.setQueryData(AUTH_QUERY_KEY, loggedIn),
   });
 
   const registerMutation = useMutation({
-    mutationFn: authService.register,
+    mutationFn: async (payload: RegisterPayload): Promise<User> => {
+      const session = await authService.register(payload);
+      setCsrfToken(session.csrfToken);
+      return session.user;
+    },
     onSuccess: (created) => queryClient.setQueryData(AUTH_QUERY_KEY, created),
   });
 
   const logout = useCallback(async () => {
+    // The logout POST itself still needs the token, so clear it only afterwards.
     await authService.logout();
+    setCsrfToken(null);
     queryClient.setQueryData(AUTH_QUERY_KEY, null);
     // Orders and admin data are per-user; drop them so nothing leaks into
     // the next session on a shared machine.
