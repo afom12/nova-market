@@ -50,3 +50,7 @@ Thumbs.db
 
 # Docker volumes
 postgres-data/
+
+# Local AI assistant config — not part of the project
+.claude/
+CLAUDE.md
